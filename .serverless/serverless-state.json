@@ -89,6 +89,12 @@
               "LogGroupName": "/aws/lambda/warrant-entry-serverless-api-prod-comments"
             }
           },
+          "CommentLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/warrant-entry-serverless-api-prod-comment"
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -173,7 +179,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/warrant-entry-serverless-api/prod/1694843784907-2023-09-16T05:56:24.907Z/warrant-entry-serverless-api.zip"
+                "S3Key": "serverless/warrant-entry-serverless-api/prod/1694849935691-2023-09-16T07:38:55.691Z/warrant-entry-serverless-api.zip"
               },
               "Handler": "api/comments.handler",
               "Runtime": "nodejs14.x",
@@ -192,15 +198,52 @@
               "CommentsLogGroup"
             ]
           },
-          "CommentsLambdaVersionibE61grUeLa5dx0jTbtXj0CJFzzrOypg1z9DTbK3qec": {
+          "CommentLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/warrant-entry-serverless-api/prod/1694849935691-2023-09-16T07:38:55.691Z/warrant-entry-serverless-api.zip"
+              },
+              "Handler": "api/comment.handler",
+              "Runtime": "nodejs14.x",
+              "FunctionName": "warrant-entry-serverless-api-prod-comment",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Description": "Deal with the methods of each comment.",
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CommentLogGroup"
+            ]
+          },
+          "CommentsLambdaVersionkxyXUkktP6GSZgRK8FFWrjmsVHwFskw3ipt9qDMzxcE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CommentsLambdaFunction"
               },
-              "CodeSha256": "/IwsNq+m9+LIB6r7HDHfumD+5+pEOZJ68JV0EDxfPVw=",
+              "CodeSha256": "uF9RfXJ43D709KNuqBTI7XjREeglupWyzK4YR7rAQuE=",
               "Description": "Deal with the methods of the comment list."
+            }
+          },
+          "CommentLambdaVersionI4W3rpIIn9O8IGrbz3Gpu7tN5f5TUn8jo1c1ubYynnU": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CommentLambdaFunction"
+              },
+              "CodeSha256": "uF9RfXJ43D709KNuqBTI7XjREeglupWyzK4YR7rAQuE=",
+              "Description": "Deal with the methods of each comment."
             }
           },
           "ApiGatewayRestApi": {
@@ -225,6 +268,21 @@
                 ]
               },
               "PathPart": "comments",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceComment": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "comment",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -276,7 +334,53 @@
               "CommentsLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1694843783396": {
+          "ApiGatewayMethodCommentPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceComment"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CommentLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "CommentLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1694849934254": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -285,7 +389,8 @@
               "StageName": "prod"
             },
             "DependsOn": [
-              "ApiGatewayMethodCommentsPost"
+              "ApiGatewayMethodCommentsPost",
+              "ApiGatewayMethodCommentPost"
             ]
           },
           "CommentsLambdaPermissionApiGateway": {
@@ -294,6 +399,43 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "CommentsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "CommentLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CommentLambdaFunction",
                   "Arn"
                 ]
               },
@@ -338,10 +480,19 @@
           "CommentsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CommentsLambdaVersionibE61grUeLa5dx0jTbtXj0CJFzzrOypg1z9DTbK3qec"
+              "Ref": "CommentsLambdaVersionkxyXUkktP6GSZgRK8FFWrjmsVHwFskw3ipt9qDMzxcE"
             },
             "Export": {
               "Name": "sls-warrant-entry-serverless-api-prod-CommentsLambdaFunctionQualifiedArn"
+            }
+          },
+          "CommentLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CommentLambdaVersionI4W3rpIIn9O8IGrbz3Gpu7tN5f5TUn8jo1c1ubYynnU"
+            },
+            "Export": {
+              "Name": "sls-warrant-entry-serverless-api-prod-CommentLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -477,7 +628,28 @@
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "CommentsLambdaVersionibE61grUeLa5dx0jTbtXj0CJFzzrOypg1z9DTbK3qec"
+        "versionLogicalId": "CommentsLambdaVersionkxyXUkktP6GSZgRK8FFWrjmsVHwFskw3ipt9qDMzxcE"
+      },
+      "comment": {
+        "handler": "api/comment.handler",
+        "memorySize": 128,
+        "description": "Deal with the methods of each comment.",
+        "events": [
+          {
+            "http": {
+              "path": "comment",
+              "method": "post",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "warrant-entry-serverless-api-prod-comment",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs14.x",
+        "vpc": {},
+        "versionLogicalId": "CommentLambdaVersionI4W3rpIIn9O8IGrbz3Gpu7tN5f5TUn8jo1c1ubYynnU"
       }
     },
     "configValidationMode": "warn",
@@ -497,7 +669,7 @@
     "artifact": "/Users/apple/Desktop/projects/warrant-entry-serverless-api/.serverless/warrant-entry-serverless-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/warrant-entry-serverless-api/prod/1694843784907-2023-09-16T05:56:24.907Z",
+    "artifactDirectoryName": "serverless/warrant-entry-serverless-api/prod/1694849935691-2023-09-16T07:38:55.691Z",
     "artifact": "warrant-entry-serverless-api.zip"
   }
 }

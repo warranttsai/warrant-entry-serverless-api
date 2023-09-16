@@ -9,35 +9,36 @@ const commentsPath = "/comments";
 
 exports.handler = async function (event) {
   console.log(`Request event: ${event}`);
+  console.log(`Request body: ${event.input.body}`);
   let response;
-  switch (true) {
-    case event.httpMethod === "GET" && event.path === healthPath:
-      response = buildResponse(200);
-      break;
-    case event.httpMethod === "GET" && event.path === commentPath:
-      response = await getComment(event.queryStringParameters.id);
-      break;
-    case event.httpMethod === "GET" && event.path === commentsPath:
-      response = await getComments();
-      break;
-    case event.httpMethod === "POST" && event.path === commentPath:
-      response = await saveComment(JSON.parse(event.body));
-      break;
-    case event.httpMethod === "PATCH" && event.path === commentPath:
-      const requestBody = JSON.parse(event.body);
-      response = await modifyComment(
-        requestBody.id,
-        requestBody.updateKey,
-        requestBody.updateValue
-      );
-      break;
-    case event.httpMethod === "DELETE" && event.path === commentPath:
-      response = await deleteComment(JSON.parse(event.body).id);
-      break;
+  // switch (true) {
+  //   case event.httpMethod === "GET" && event.path === healthPath:
+  //     response = buildResponse(200);
+  //     break;
+  //   case event.httpMethod === "GET" && event.path === commentPath:
+  //     response = await getComment(event.queryStringParameters.id);
+  //     break;
+  //   case event.httpMethod === "GET" && event.path === commentsPath:
+  //     response = await getComments();
+  //     break;
+  //   case event.httpMethod === "POST" && event.path === commentPath:
+  //     response = await saveComment(JSON.parse(event.body));
+  //     break;
+  //   case event.httpMethod === "PATCH" && event.path === commentPath:
+  //     const requestBody = JSON.parse(event.body);
+  //     response = await modifyComment(
+  //       requestBody.id,
+  //       requestBody.updateKey,
+  //       requestBody.updateValue
+  //     );
+  //     break;
+  //   case event.httpMethod === "DELETE" && event.path === commentPath:
+  //     response = await deleteComment(JSON.parse(event.body).id);
+  //     break;
 
-    default:
-      response = buildResponse(404, "404 Not Found");
-  }
+  //   default:
+  //     response = buildResponse(404, "404 Not Found");
+  // }
   return response;
 };
 

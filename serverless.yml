@@ -29,3 +29,12 @@ functions:
       - http:
           path: comments
           method: post
+
+  comment:
+    handler: api/comment.handler
+    memorySize: 128
+    description: Deal with the methods of each comment.
+    events:
+      - http:
+          path: comment
+          method: post
