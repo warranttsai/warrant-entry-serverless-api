@@ -9,6 +9,7 @@ const AWS = require("aws-sdk");
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
+  const dynamodbTableName = "visitorComments";
   const requestEvent = JSON.stringify(event);
   console.log(`Request event: ${requestEvent}`);
   const jsonRequestEvent = JSON.parse(requestEvent);
@@ -16,14 +17,25 @@ module.exports.handler = async (event) => {
   console.log(`endpoint: ${endPoint}`);
 
   let response;
+  let params;
   switch (endPoint) {
-    case "getComment":
-      console.log("userId", jsonRequestEvent.params.userId);
-      //   response = await getComment(userId);
-      break;
+    case "getCommentByUserId":
+      params = {
+        TableName: dynamodbTableName,
+        Item: {
+          user_id: jsonRequestEvent.params.userId,
+        },
+      };
+      try {
+        const data = await docClient.get(params).promise();
+        return { body: JSON.stringify(data) };
+      } catch (err) {
+        return { error: err };
+      }
+
     case "saveComment":
-      const params = {
-        TableName: "visitorComments",
+      params = {
+        TableName: dynamodbTableName,
         Item: {
           id: AWS.util.uuid.v4(),
           user_id: jsonRequestEvent.params.userId,
@@ -38,56 +50,52 @@ module.exports.handler = async (event) => {
       } catch (err) {
         return { error: err };
       }
+
     case "modifyComment":
-      //   response = await modifyComment(userId);
-      break;
-    case "getComment":
-      //   const userId = jsonRequestEvent.params.userId;
-      //   response = await getComment(userId);
-      break;
+      params = {
+        TableName: dynamodbTableName,
+        Key: {
+          id: jsonRequestEvent.params.commentId,
+        },
+        UpdateExpression: `SET comment = :value`,
+        ExpressionAttributeValues: {
+          ":value": jsonRequestEvent.params.newComment,
+        },
+        ReturnValues: "UPDATED_NEW",
+      };
+      try {
+        await docClient.send(params).promise();
+        return { body: "Successfully updated item!" };
+      } catch (err) {
+        return { error: err };
+      }
+
+    case "deleteComment":
+      params = {
+        TableName: dynamodbTableName,
+        Key: {
+          id: jsonRequestEvent.params.commentId,
+        },
+        ReturnValues: NONE | ALL_OLD | UPDATED_OLD | ALL_NEW | UPDATED_NEW,
+      };
+      try {
+        const data = await docClient.delete(params).promise();
+        return { body: JSON.stringify(data) };
+      } catch (err) {
+        return { error: err };
+      }
 
     default:
-      response = buildResponse(404, "404 Not Found");
+      return {
+        statusCode: 404,
+        body: JSON.stringify(
+          {
+            message: "404 Not Found!",
+            response: response,
+          },
+          null,
+          2
+        ),
+      };
   }
-
-  return {
-    statusCode: 404,
-    body: JSON.stringify(
-      {
-        message: "404 Not Found!",
-        response: response,
-      },
-      null,
-      2
-    ),
-  };
 };
-
-async function getComment(commentId) {
-  const params = {
-    TableName: dynamodbTableName,
-    Key: {
-      id: commentId,
-    },
-  };
-  return await dynamodb
-    .get(params)
-    .promise()
-    .then(
-      (res) => {
-        return buildResponse(200, res.item);
-      },
-      (err) => {
-        console.log(`Error happended while getting comment. ${err}`);
-      }
-    );
-}
-function buildResponse(statusCode, body) {
-  return {
-    statusCode: statusCode,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  };
-}

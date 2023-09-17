@@ -8,11 +8,18 @@ module.exports.handler = async (event) => {
   const jsonRequestEvent = JSON.parse(requestEvent);
 
   let response;
+  let params;
   switch (jsonRequestEvent.endpoint) {
     case "getComments":
-      const userId = jsonRequestEvent.params.userId;
-      response = await getComments(userId);
-      break;
+      params = {
+        TableName: "visitorComments",
+      };
+      try {
+        const data = await docClient.scan(params).promise();
+        return { body: JSON.stringify(data) };
+      } catch (err) {
+        return { error: err };
+      }
 
     default:
       response = buildResponse(404, "404 Not Found");
