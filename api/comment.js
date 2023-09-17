@@ -25,7 +25,7 @@ module.exports.handler = async (event) => {
       const params = {
         TableName: "visitorComments",
         Item: {
-          id: "13123123",
+          id: AWS.util.uuid.v4(),
           user_id: jsonRequestEvent.params.userId,
           comment: jsonRequestEvent.params.comment,
           comment_date: jsonRequestEvent.params.comment_date,
