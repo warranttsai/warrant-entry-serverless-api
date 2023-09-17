@@ -19,20 +19,6 @@ module.exports.handler = async (event) => {
   let response;
   let params;
   switch (endPoint) {
-    case "getCommentByUserId":
-      params = {
-        TableName: dynamodbTableName,
-        Item: {
-          user_id: jsonRequestEvent.params.userId,
-        },
-      };
-      try {
-        const data = await docClient.get(params).promise();
-        return { body: JSON.stringify(data) };
-      } catch (err) {
-        return { error: err };
-      }
-
     case "saveComment":
       params = {
         TableName: dynamodbTableName,
@@ -57,14 +43,17 @@ module.exports.handler = async (event) => {
         Key: {
           id: jsonRequestEvent.params.commentId,
         },
-        UpdateExpression: `SET comment = :value`,
+        UpdateExpression: `SET #comm = :value`,
         ExpressionAttributeValues: {
           ":value": jsonRequestEvent.params.newComment,
+        },
+        ExpressionAttributeNames: {
+          "#comm": "comment",
         },
         ReturnValues: "UPDATED_NEW",
       };
       try {
-        await docClient.send(params).promise();
+        await docClient.update(params).promise();
         return { body: "Successfully updated item!" };
       } catch (err) {
         return { error: err };
@@ -76,11 +65,10 @@ module.exports.handler = async (event) => {
         Key: {
           id: jsonRequestEvent.params.commentId,
         },
-        ReturnValues: NONE | ALL_OLD | UPDATED_OLD | ALL_NEW | UPDATED_NEW,
       };
       try {
-        const data = await docClient.delete(params).promise();
-        return { body: JSON.stringify(data) };
+        await docClient.delete(params).promise();
+        return { body: "Successfully updated item!" };
       } catch (err) {
         return { error: err };
       }

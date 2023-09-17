@@ -167,7 +167,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/warrant-entry-serverless-api/prod/1694917488045-2023-09-17T02:24:48.045Z/warrant-entry-serverless-api.zip"
+          "S3Key": "serverless/warrant-entry-serverless-api/prod/1694984642088-2023-09-17T21:04:02.088Z/warrant-entry-serverless-api.zip"
         },
         "Handler": "api/comments.handler",
         "Runtime": "nodejs14.x",
@@ -193,7 +193,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/warrant-entry-serverless-api/prod/1694917488045-2023-09-17T02:24:48.045Z/warrant-entry-serverless-api.zip"
+          "S3Key": "serverless/warrant-entry-serverless-api/prod/1694984642088-2023-09-17T21:04:02.088Z/warrant-entry-serverless-api.zip"
         },
         "Handler": "api/comment.handler",
         "Runtime": "nodejs14.x",
@@ -212,25 +212,25 @@
         "CommentLogGroup"
       ]
     },
-    "CommentsLambdaVersioniIo3HPxU8ZCbOzp7bzz2r8hoqevSc6fHTFVs8Qi7os": {
+    "CommentsLambdaVersionterhIP6ug84EixebtnVXMMYRUBrUutSdquJcxww8o0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CommentsLambdaFunction"
         },
-        "CodeSha256": "n9oCa5+onyzq+7BSR51URMx3qtBJIJem3PbZNJT10jg=",
+        "CodeSha256": "2j/lyy0vmmHebiL1X6I8bCUhtQ+qiAygHN1hF6JwSpc=",
         "Description": "Deal with the methods of the comment list."
       }
     },
-    "CommentLambdaVersionDo67nwtiVyoa62WgEeYXS0If03QhJjGsphhdktKrY": {
+    "CommentLambdaVersionO22Ffy3FLffyNz9qD56g2ROmf4eZM5ioAR2Mtq3k": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CommentLambdaFunction"
         },
-        "CodeSha256": "n9oCa5+onyzq+7BSR51URMx3qtBJIJem3PbZNJT10jg=",
+        "CodeSha256": "2j/lyy0vmmHebiL1X6I8bCUhtQ+qiAygHN1hF6JwSpc=",
         "Description": "Deal with the methods of each comment."
       }
     },
@@ -368,7 +368,7 @@
         "CommentLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1694917485434": {
+    "ApiGatewayDeployment1694984640880": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -468,7 +468,7 @@
     "CommentsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CommentsLambdaVersioniIo3HPxU8ZCbOzp7bzz2r8hoqevSc6fHTFVs8Qi7os"
+        "Ref": "CommentsLambdaVersionterhIP6ug84EixebtnVXMMYRUBrUutSdquJcxww8o0"
       },
       "Export": {
         "Name": "sls-warrant-entry-serverless-api-prod-CommentsLambdaFunctionQualifiedArn"
@@ -477,7 +477,7 @@
     "CommentLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CommentLambdaVersionDo67nwtiVyoa62WgEeYXS0If03QhJjGsphhdktKrY"
+        "Ref": "CommentLambdaVersionO22Ffy3FLffyNz9qD56g2ROmf4eZM5ioAR2Mtq3k"
       },
       "Export": {
         "Name": "sls-warrant-entry-serverless-api-prod-CommentLambdaFunctionQualifiedArn"
