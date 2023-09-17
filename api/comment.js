@@ -5,6 +5,8 @@
 //   modifyComment,
 //   deleteComment,
 // } from "../controllers/commentController";
+const AWS = require("aws-sdk");
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
   const requestEvent = JSON.stringify(event);
@@ -16,17 +18,26 @@ module.exports.handler = async (event) => {
   let response;
   switch (endPoint) {
     case "getComment":
-      const userId = jsonRequestEvent.params.userId;
-      console.log("userId", userId);
+      console.log("userId", jsonRequestEvent.params.userId);
       //   response = await getComment(userId);
       break;
     case "saveComment":
-      // const userName = jsonRequestEvent.params.userId;
-      // const date = jsonRequestEvent.params.userId;
-      // const time = jsonRequestEvent.params.time;
-      // const comment = jsonRequestEvent.params.comment;
-      //   response = await saveComment(userId);
-      break;
+      const params = {
+        TableName: "visitorComments",
+        Item: {
+          id: "13123123",
+          user_id: jsonRequestEvent.params.userId,
+          comment: jsonRequestEvent.params.comment,
+          comment_date: jsonRequestEvent.params.comment_date,
+          comment_time: jsonRequestEvent.params.comment_time,
+        },
+      };
+      try {
+        await docClient.put(params).promise();
+        return { body: "Successfully created item!" };
+      } catch (err) {
+        return { error: err };
+      }
     case "modifyComment":
       //   response = await modifyComment(userId);
       break;
@@ -40,10 +51,10 @@ module.exports.handler = async (event) => {
   }
 
   return {
-    statusCode: 200,
+    statusCode: 404,
     body: JSON.stringify(
       {
-        message: "Go Serverless v1.0! Your function executed successfully!",
+        message: "404 Not Found!",
         response: response,
       },
       null,
