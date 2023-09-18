@@ -20,6 +20,10 @@ provider:
   stage: prod
   region: ap-southeast-2
 
+package:
+  exclude:
+    - node_modules/**
+
 functions:
   comments:
     handler: api/comments.handler
