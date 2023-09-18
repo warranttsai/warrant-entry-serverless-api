@@ -1,51 +1,48 @@
 "use strict";
-// import {
-//   getComment,
-//   saveComment,
-//   modifyComment,
-//   deleteComment,
-// } from "../controllers/commentController";
 const AWS = require("aws-sdk");
+AWS.config.update({ region: "ap-southeast-2" });
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
   const dynamodbTableName = "visitorComments";
   const requestEvent = JSON.stringify(event);
-  console.log(`Request event: ${requestEvent}`);
   const jsonRequestEvent = JSON.parse(requestEvent);
-  const endPoint = jsonRequestEvent.endpoint;
-  console.log(`endpoint: ${endPoint}`);
+  const requestBody = JSON.parse(jsonRequestEvent.body);
+  const requestEndPoint = requestBody.endpoint;
+  const requestParams = requestBody.params;
+  console.log(`Request endpoint: ${requestEndPoint}`);
+  console.log("requestParams:", requestParams);
 
   let response;
-  let params;
-  switch (endPoint) {
+  let payload;
+  switch (requestEndPoint) {
     case "saveComment":
-      params = {
+      payload = {
         TableName: dynamodbTableName,
         Item: {
           id: AWS.util.uuid.v4(),
-          user_id: jsonRequestEvent.params.userId,
-          comment: jsonRequestEvent.params.comment,
-          comment_date: jsonRequestEvent.params.comment_date,
-          comment_time: jsonRequestEvent.params.comment_time,
+          user_id: requestParams.userId,
+          comment: requestParams.comment,
+          comment_date: requestParams.comment_date,
+          comment_time: requestParams.comment_time,
         },
       };
       try {
-        await docClient.put(params).promise();
+        await docClient.put(payload).promise();
         return { body: "Successfully created item!" };
       } catch (err) {
         return { error: err };
       }
 
     case "modifyComment":
-      params = {
+      payload = {
         TableName: dynamodbTableName,
         Key: {
-          id: jsonRequestEvent.params.commentId,
+          id: requestParams.commentId,
         },
         UpdateExpression: `SET #comm = :value`,
         ExpressionAttributeValues: {
-          ":value": jsonRequestEvent.params.newComment,
+          ":value": requestParams.newComment,
         },
         ExpressionAttributeNames: {
           "#comm": "comment",
@@ -53,21 +50,21 @@ module.exports.handler = async (event) => {
         ReturnValues: "UPDATED_NEW",
       };
       try {
-        await docClient.update(params).promise();
+        await docClient.update(payload).promise();
         return { body: "Successfully updated item!" };
       } catch (err) {
         return { error: err };
       }
 
     case "deleteComment":
-      params = {
+      payload = {
         TableName: dynamodbTableName,
         Key: {
-          id: jsonRequestEvent.params.commentId,
+          id: requestParams.commentId,
         },
       };
       try {
-        await docClient.delete(params).promise();
+        await docClient.delete(payload).promise();
         return { body: "Successfully updated item!" };
       } catch (err) {
         return { error: err };
