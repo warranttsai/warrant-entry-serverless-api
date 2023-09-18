@@ -38,3 +38,6 @@ functions:
       - http:
           path: comment
           method: post
+
+plugins:
+  - serverless-offline
