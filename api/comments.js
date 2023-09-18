@@ -1,18 +1,24 @@
 "use strict";
-import { getComments } from "../controllers/commentsController";
-import { buildResponse } from "../utils/generalUtils";
+const AWS = require("aws-sdk");
+AWS.config.update({ region: "ap-southeast-2" });
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
+  const dynamodbTableName = "visitorComments";
   const requestEvent = JSON.stringify(event);
-  console.log(`Request event: ${requestEvent}`);
   const jsonRequestEvent = JSON.parse(requestEvent);
+  const requestBody = JSON.parse(jsonRequestEvent.body);
+  console.log("Request body:", requestBody);
+  const requestEndPoint = requestBody.endpoint;
+  const requestParams = requestBody.params;
+  console.log(`Request endpoint: ${requestEndPoint}`);
 
   let response;
   let params;
-  switch (jsonRequestEvent.endpoint) {
+  switch (requestEndPoint) {
     case "getComments":
       params = {
-        TableName: "visitorComments",
+        TableName: dynamodbTableName,
       };
       try {
         const data = await docClient.scan(params).promise();
@@ -21,21 +27,34 @@ module.exports.handler = async (event) => {
         return { error: err };
       }
 
-    default:
-      response = buildResponse(404, "404 Not Found");
-  }
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: "Go Serverless v1.0! Your function executed successfully!",
-        response: response,
-      },
-      null,
-      2
-    ),
-  };
+    case "getCommentsByUserId":
+      params = {
+        TableName: dynamodbTableName,
+        FilterExpression: "user_id = :user_id",
+        ScanIndexForward: false, // true = ascending, false = descending
+        ExpressionAttributeValues: {
+          ":user_id": requestParams.userId,
+        },
+      };
+      try {
+        const data = await docClient.query(params).promise();
+        return { body: JSON.stringify(data) };
+      } catch (err) {
+        return { error: err };
+      }
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+    // default case
+    default:
+      return {
+        statusCode: 404,
+        body: JSON.stringify(
+          {
+            message: "404 Not Found!",
+            response: response,
+          },
+          null,
+          2
+        ),
+      };
+  }
 };
