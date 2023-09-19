@@ -4,10 +4,14 @@ AWS.config.update({ region: "ap-southeast-2" });
 const docClient = new AWS.DynamoDB.DocumentClient();
 const requestHeader = {
   "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Origin":
-    "http://localhost:5000, https://warrant-entry.vercel.app",
+  "Access-Control-Allow-Origin": "http://localhost:5000",
   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
 };
+// const requestHeader = {
+//   "Access-Control-Allow-Headers": "Content-Type",
+//   "Access-Control-Allow-Origin": "https://warrant-entry.vercel.app",
+//   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+// };
 
 module.exports.handler = async (event) => {
   const dynamodbTableName = "visitorComments";

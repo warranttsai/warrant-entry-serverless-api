@@ -2,6 +2,16 @@
 const AWS = require("aws-sdk");
 AWS.config.update({ region: "ap-southeast-2" });
 const docClient = new AWS.DynamoDB.DocumentClient();
+const requestHeader = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin": "http://localhost:5000",
+  "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+};
+// const requestHeader = {
+//   "Access-Control-Allow-Headers": "Content-Type",
+//   "Access-Control-Allow-Origin": "https://warrant-entry.vercel.app",
+//   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+// };
 
 module.exports.handler = async (event) => {
   const dynamodbTableName = "visitorComments";
@@ -21,7 +31,7 @@ module.exports.handler = async (event) => {
         TableName: dynamodbTableName,
         Item: {
           id: AWS.util.uuid.v4(),
-          user_id: requestParams.userId,
+          user_id: requestParams.user_id,
           comment: requestParams.comment,
           comment_date: requestParams.comment_date,
           comment_time: requestParams.comment_time,
@@ -29,9 +39,17 @@ module.exports.handler = async (event) => {
       };
       try {
         await docClient.put(payload).promise();
-        return { body: "Successfully created item!" };
+        return {
+          statusCode: 200,
+          headers: requestHeader,
+          body: "Successfully saved comment!",
+        };
       } catch (err) {
-        return { error: err };
+        return {
+          statusCode: 500,
+          headers: requestHeader,
+          error: err,
+        };
       }
 
     case "modifyComment":
@@ -51,9 +69,17 @@ module.exports.handler = async (event) => {
       };
       try {
         await docClient.update(payload).promise();
-        return { body: "Successfully updated item!" };
+        return {
+          statusCode: 200,
+          headers: requestHeader,
+          body: "Successfully updated comment!",
+        };
       } catch (err) {
-        return { error: err };
+        return {
+          statusCode: 500,
+          headers: requestHeader,
+          error: err,
+        };
       }
 
     case "deleteComment":
@@ -63,16 +89,26 @@ module.exports.handler = async (event) => {
           id: requestParams.commentId,
         },
       };
+
       try {
-        await docClient.delete(payload).promise();
-        return { body: "Successfully updated item!" };
+        await docClient.update(payload).promise();
+        return {
+          statusCode: 200,
+          headers: requestHeader,
+          body: "Successfully delete comment!",
+        };
       } catch (err) {
-        return { error: err };
+        return {
+          statusCode: 500,
+          headers: requestHeader,
+          error: err,
+        };
       }
 
     default:
       return {
         statusCode: 404,
+        headers: requestHeader,
         body: JSON.stringify(
           {
             message: "404 Not Found!",
