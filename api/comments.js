@@ -2,6 +2,12 @@
 const AWS = require("aws-sdk");
 AWS.config.update({ region: "ap-southeast-2" });
 const docClient = new AWS.DynamoDB.DocumentClient();
+const requestHeader = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin":
+    "http://localhost:5000, https://warrant-entry.vercel.app",
+  "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+};
 
 module.exports.handler = async (event) => {
   const dynamodbTableName = "visitorComments";
@@ -22,7 +28,11 @@ module.exports.handler = async (event) => {
       };
       try {
         const data = await docClient.scan(params).promise();
-        return { body: JSON.stringify(data) };
+        return {
+          statusCode: 200,
+          headers: requestHeader,
+          body: JSON.stringify(data),
+        };
       } catch (err) {
         return { error: err };
       }
@@ -38,7 +48,11 @@ module.exports.handler = async (event) => {
       };
       try {
         const data = await docClient.query(params).promise();
-        return { body: JSON.stringify(data) };
+        return {
+          statusCode: 200,
+          headers: requestHeader,
+          body: JSON.stringify(data),
+        };
       } catch (err) {
         return { error: err };
       }
@@ -47,6 +61,7 @@ module.exports.handler = async (event) => {
     default:
       return {
         statusCode: 404,
+        headers: requestHeader,
         body: JSON.stringify(
           {
             message: "404 Not Found!",
