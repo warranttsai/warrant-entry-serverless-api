@@ -1,5 +1,4 @@
 node_modules
-.serverless/cloudformation-template-create-stack.json
-.serverless/cloudformation-template-create-stack.json
-.serverless/erverless-state.json
+.serverless/cloudformation-template-update-stack.json
+.serverless/serverless-state.json
 .serverless/warrant-entry-serverless-api.zip

@@ -31,26 +31,50 @@ module.exports.handler = async (event) => {
         TableName: dynamodbTableName,
         Item: {
           id: AWS.util.uuid.v4(),
-          user_id: requestParams.user_id,
+          user_name: requestParams.user_name,
           comment: requestParams.comment,
           comment_date: requestParams.comment_date,
           comment_time: requestParams.comment_time,
         },
       };
       try {
-        await docClient.put(payload).promise();
+        // note: scan is working but put is not working
+        // const data = await docClient.scan(params).promise();
+        console.log("start!");
+        const data = await docClient.put(payload).promise();
+        console.log("success!");
         return {
           statusCode: 200,
           headers: requestHeader,
-          body: "Successfully saved comment!",
+          body: JSON.stringify(data),
         };
       } catch (err) {
-        return {
-          statusCode: 500,
-          headers: requestHeader,
-          error: err,
-        };
+        return { error: err };
       }
+    // payload = {
+    //   TableName: dynamodbTableName,
+    //   Item: {
+    //     id: AWS.util.uuid.v4(),
+    //     user_id: requestParams.user_id,
+    //     comment: requestParams.comment,
+    //     comment_date: requestParams.comment_date,
+    //     comment_time: requestParams.comment_time,
+    //   },
+    // };
+    // try {
+    //   await docClient.put(payload).promise();
+    //   return {
+    //     statusCode: 200,
+    //     headers: requestHeader,
+    //     body: "Successfully saved comment!",
+    //   };
+    // } catch (err) {
+    //   return {
+    //     statusCode: 500,
+    //     headers: requestHeader,
+    //     error: err,
+    //   };
+    // }
 
     case "modifyComment":
       payload = {
