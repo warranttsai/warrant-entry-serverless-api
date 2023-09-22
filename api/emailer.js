@@ -32,11 +32,22 @@ module.exports.handler = async (event) => {
         Message: {
           Body: {
             Text: {
-              Data: "This is the content of the email",
+              Data: `
+              *** This email was sent from an auto-notification system*** 
+
+              Your name: ${requestParams.user_name}
+              Your email: ${requestParams.user_email}
+              Your comment: ${requestParams.user_feedback}
+              
+              Feel free to reply directly to this email and Warrant will get it.
+
+              Kindest regards, 
+              Warrant TSAI
+              `,
             },
           },
           Subject: {
-            Data: "Email subject",
+            Data: "Thank you for the valuable feedback and you",
           },
         },
         Source: "warrant1997@gmail.com",
