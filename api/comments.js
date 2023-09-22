@@ -38,7 +38,11 @@ module.exports.handler = async (event) => {
           body: JSON.stringify(data),
         };
       } catch (err) {
-        return { error: err };
+        return {
+          statusCode: 500,
+          headers: requestHeader,
+          body: { error: err },
+        };
       }
 
     case "getCommentsByUserId":
@@ -58,7 +62,11 @@ module.exports.handler = async (event) => {
           body: JSON.stringify(data),
         };
       } catch (err) {
-        return { error: err };
+        return {
+          statusCode: 500,
+          headers: requestHeader,
+          body: { error: err },
+        };
       }
 
     // default case

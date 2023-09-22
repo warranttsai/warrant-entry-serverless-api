@@ -47,7 +47,11 @@ module.exports.handler = async (event) => {
           body: JSON.stringify(data),
         };
       } catch (err) {
-        return { error: err };
+        return {
+          statusCode: 500,
+          headers: requestHeader,
+          body: { error: err },
+        };
       }
 
     case "modifyComment":
@@ -76,7 +80,7 @@ module.exports.handler = async (event) => {
         return {
           statusCode: 500,
           headers: requestHeader,
-          error: err,
+          body: { error: err },
         };
       }
 
