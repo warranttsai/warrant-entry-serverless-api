@@ -43,5 +43,14 @@ functions:
           path: comment
           method: post
 
+  emailer:
+    handler: api/emailer.handler
+    memorySize: 128
+    description: email related methods
+    events:
+      - http:
+          path: emailer
+          method: post
+
 plugins:
   - serverless-offline
