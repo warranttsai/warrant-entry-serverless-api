@@ -47,7 +47,7 @@ module.exports.handler = async (event) => {
             },
           },
           Subject: {
-            Data: "Thank you for the valuable feedback and you",
+            Data: "Thank you for the valuable feedback!",
           },
         },
         Source: "warrant1997@gmail.com",
