@@ -54,18 +54,16 @@ module.exports.handler = async (event) => {
       };
       const ses = new AWS.SES();
       // Create promise and SES service object
-      const sendEmailPromise = ses.sendEmail(params).promise();
-
-      // Handle promise's fulfilled/rejected states
-      await sendEmailPromise
-        .then(function (data) {
-          console.log(data.MessageId);
-        })
-        .catch(function (err) {
-          console.error(err, err.stack);
-        });
-
-      return "Email sent successfully";
+      try {
+        const data = await ses.sendEmail(params).promise();
+        return {
+          statusCode: 200,
+          headers: requestHeader,
+          body: JSON.stringify(data),
+        };
+      } catch (err) {
+        return { error: err };
+      }
 
     // default case
     default:
