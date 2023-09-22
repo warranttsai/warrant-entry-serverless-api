@@ -37,7 +37,7 @@ module.exports.handler = async (event) => {
 
               Your name: ${requestParams.user_name}
               Your email: ${requestParams.user_email}
-              Your comment: ${requestParams.user_feedback}
+              Your feedback: ${requestParams.user_feedback}
               
               Feel free to reply directly to this email and Warrant will get it.
 
