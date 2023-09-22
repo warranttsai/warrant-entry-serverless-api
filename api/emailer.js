@@ -13,7 +13,6 @@ const requestHeader = {
   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
 };
 module.exports.handler = async (event) => {
-  const dynamodbTableName = "visitorComments";
   const requestEvent = JSON.stringify(event);
   const jsonRequestEvent = JSON.parse(requestEvent);
   const requestBody = JSON.parse(jsonRequestEvent.body);
@@ -25,7 +24,7 @@ module.exports.handler = async (event) => {
   let response;
   let params;
   switch (requestEndPoint) {
-    case "sendingEmail":
+    case "sendingEmailToUser":
       params = {
         Destination: {
           ToAddresses: [requestParams.user_email],
