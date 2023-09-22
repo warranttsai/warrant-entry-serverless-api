@@ -27,6 +27,7 @@ module.exports.handler = async (event) => {
     case "sendingEmailToUser":
       params = {
         Destination: {
+          // this addresses could be multiple email addresses
           ToAddresses: [requestParams.user_email],
         },
         Message: {
