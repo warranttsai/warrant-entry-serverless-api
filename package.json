@@ -1,7 +1,8 @@
 {
   "scripts": {
     "dev": "sls offline",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "deployFunction": "sls deploy function -f"
   },
   "dependencies": {
     "aws-sdk": "^2.1459.0",
