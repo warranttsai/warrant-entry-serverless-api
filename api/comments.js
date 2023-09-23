@@ -9,7 +9,11 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 // };
 const requestHeader = {
   "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Origin": "https://warrant-entry.vercel.app",
+  // Note: Ideally, we should only allow the specific URL using the Lambda method.
+  //       Here I set it as * to allow all the request coming in for easier developing.
+  //       Please do keep this point in your mind
+  // "Access-Control-Allow-Origin": "https://warrant-entry.vercel.app",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
 };
 
