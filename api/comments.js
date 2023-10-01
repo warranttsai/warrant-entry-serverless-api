@@ -9,7 +9,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 // };
 const requestHeader = {
   "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Origin": "https://warrant-entry.vercel.app",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
 };
 
