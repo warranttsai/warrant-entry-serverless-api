@@ -6,17 +6,25 @@ Update on <b>1 October 2023</b>
 Program Language: JavaScript
 Runtime: nodejs14.x
 
-# plugins
+## How To Install This Project
+
+1. Clone this project.
+2. Install NPM or Yarn(mac) in your terminal.
+3. Move your terminal to the project folder.
+4. Run "yarn install" or "npm install" to install the modules.
+5. Run "yarn dev" or "npm run dev" to run the project on "localhost:5000"
+
+## plugins
 
 - serverless-offline
 - aws-sdk
 
-# APIs
+## APIs
 
 - comment
 - comments
 
-# How To Execute This Project?
+## How To Execute This Project?
 
 - yarn dev/npm run dev: "sls offline"
   This command is used to enable the api on local side.
@@ -25,14 +33,14 @@ Runtime: nodejs14.x
 - yarn deployFunction <fileName>: "sls deploy function -f"
   You can specify the file which you wished to deploy instead of the whole project. It helps to deploy the new functions in a efficient manner.
 
-# Under developing functions
+## Under developing functions
 
 none
 
-# To-do List
+## To-do List
 
 None
 
-# Contributors:
+## Contributors:
 
 - Warrant TSAI
