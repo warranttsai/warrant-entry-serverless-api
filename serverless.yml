@@ -52,5 +52,14 @@ functions:
           path: emailer
           method: post
 
+  s3GetMethod:
+    handler: api/s3GetMethod.handler
+    memorySize: 128
+    description: Methods which get data from S3 bucket
+    events:
+      - http:
+          path: s3GetMethod
+          method: get
+
 plugins:
   - serverless-offline
