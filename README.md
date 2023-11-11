@@ -1,8 +1,9 @@
 # warrant-entry-serverless-api
 
-This project is created for serving the front-end project "warrant-entry". It includes the APIs for comment-related functions.
+This is the AWS Lambda serverless project. It is used to access the services in Warrant TSAI's personal AWS account
 
 Update on <b>1 October 2023</b>
+
 Program Language: JavaScript
 Runtime: nodejs14.x
 
